@@ -1,0 +1,9 @@
+admin_key:
+  user: admin
+  token: admin-api-key-12345
+  name: Admin Key
+
+user_key:
+  user: regular_user
+  token: user-api-key-67890
+  name: User Key

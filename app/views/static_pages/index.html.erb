@@ -1,0 +1,168 @@
+<% content_for(:title) { "Hackatime - Your Coding Dashboard" } %>
+
+<% if logged_in? %>
+  <!-- Dashboard for logged in users -->
+  <div class="space-y-6">
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <span class="text-3xl">⏱️</span>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Today's Coding</dt>
+                <dd class="text-lg font-semibold text-gray-900"><%= format_duration(@today_duration || 0) %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <span class="text-3xl">🔥</span>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Current Streak</dt>
+                <dd class="text-lg font-semibold text-gray-900"><%= @streak || 0 %> days</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <span class="text-3xl">📊</span>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Top Language</dt>
+                <dd class="text-lg font-semibold text-gray-900"><%= @today_languages&.first&.first || "N/A" %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <span class="text-3xl">📁</span>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Active Project</dt>
+                <dd class="text-lg font-semibold text-gray-900 truncate"><%= @today_projects&.first&.first || "N/A" %></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Today's Activity -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Today's Languages</h2>
+        <% if @today_languages.present? %>
+          <ul class="space-y-3">
+            <% @today_languages.each do |language, seconds| %>
+              <li class="flex justify-between items-center">
+                <span class="text-gray-700"><%= language || "Unknown" %></span>
+                <span class="text-gray-500"><%= format_duration(seconds) %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-gray-500">No coding activity yet today. Start coding to see your stats!</p>
+        <% end %>
+      </div>
+
+      <!-- Today's Editors -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Today's Editors</h2>
+        <% if @today_editors.present? %>
+          <ul class="space-y-3">
+            <% @today_editors.each do |editor, seconds| %>
+              <li class="flex justify-between items-center">
+                <span class="text-gray-700"><%= editor || "Unknown" %></span>
+                <span class="text-gray-500"><%= format_duration(seconds) %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-gray-500">No editor data yet today.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Currently Hacking -->
+    <% if @currently_hacking.present? %>
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">🟢 Currently Hacking</h2>
+        <div class="flex flex-wrap gap-4">
+          <% @currently_hacking.each do |user| %>
+            <div class="flex items-center space-x-2 bg-green-50 px-3 py-2 rounded-full">
+              <% if user.avatar_url.present? %>
+                <%= image_tag user.avatar_url, class: "w-6 h-6 rounded-full", alt: user.display_username %>
+              <% else %>
+                <span class="w-6 h-6 rounded-full bg-green-200 flex items-center justify-center text-xs">
+                  <%= user.display_username.first.upcase %>
+                </span>
+              <% end %>
+              <span class="text-sm text-gray-700"><%= user.display_username %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <!-- Landing page for visitors -->
+  <div class="text-center py-16">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">Track Your Coding Time</h1>
+    <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+      Hackatime is a WakaTime-compatible coding time tracker built for 
+      <a href="https://hackclub.com/" class="text-indigo-600 hover:underline">Hack Club</a>. 
+      Track your coding activity across 75+ editors and compete on leaderboards.
+    </p>
+    
+    <div class="space-x-4 mb-12">
+      <%= link_to new_session_path, class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700" do %>
+        🚀 Get Started
+      <% end %>
+      <%= link_to "View Leaderboards →", leaderboards_path, class: "inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
+    </div>
+
+    <!-- Features -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div class="bg-white p-6 rounded-lg shadow">
+        <div class="text-4xl mb-4">📊</div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Detailed Stats</h3>
+        <p class="text-gray-600">Track time by project, language, editor, and more. See daily, weekly, and monthly breakdowns.</p>
+      </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow">
+        <div class="text-4xl mb-4">🏆</div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Leaderboards</h3>
+        <p class="text-gray-600">Compete with other Hack Clubbers. Daily and weekly rankings to keep you motivated.</p>
+      </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow">
+        <div class="text-4xl mb-4">🔗</div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">75+ Editors</h3>
+        <p class="text-gray-600">Works with VS Code, Vim, JetBrains IDEs, Sublime, and many more. WakaTime-compatible plugins work out of the box.</p>
+      </div>
+    </div>
+  </div>
+<% end %>
