@@ -397,8 +397,19 @@ hackatime/
 
 ---
 
+## Ready to Deploy?
+
+See [HOSTING.md](./HOSTING.md) for production deployment guides including:
+- Kamal (Rails official deployment tool)
+- Railway, Render, Fly.io (easy cloud platforms)
+- Docker on any VPS
+- Heroku, DigitalOcean
+
+---
+
 ## Need Help?
 
 - Check the [README](./README.md) for architecture overview
+- Check [HOSTING.md](./HOSTING.md) for deployment guides
 - Open an issue on GitHub
 - Join the Hack Club Slack community
