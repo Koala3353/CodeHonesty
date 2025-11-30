@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2024_01_01_000015) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_30_121136) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,41 @@ ActiveRecord::Schema[8.1].define(version: 2024_01_01_000015) do
     t.bigint "user_id", null: false
     t.index ["token"], name: "index_api_keys_on_token", unique: true
     t.index ["user_id"], name: "index_api_keys_on_user_id"
+  end
+
+  create_table "assignments", force: :cascade do |t|
+    t.bigint "classroom_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.datetime "due_date", null: false
+    t.decimal "expected_hours", precision: 5, scale: 2
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["classroom_id"], name: "index_assignments_on_classroom_id"
+  end
+
+  create_table "classrooms", force: :cascade do |t|
+    t.string "code", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.bigint "teacher_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_classrooms_on_code", unique: true
+    t.index ["teacher_id"], name: "index_classrooms_on_teacher_id"
+  end
+
+  create_table "code_snapshots", force: :cascade do |t|
+    t.datetime "captured_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.text "content"
+    t.string "content_hash", limit: 64
+    t.datetime "created_at", null: false
+    t.string "file_path", null: false
+    t.integer "lines_of_code", default: 0
+    t.bigint "submission_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["content_hash"], name: "index_code_snapshots_on_content_hash"
+    t.index ["submission_id"], name: "index_code_snapshots_on_submission_id"
   end
 
   create_table "commits", force: :cascade do |t|
@@ -52,6 +87,34 @@ ActiveRecord::Schema[8.1].define(version: 2024_01_01_000015) do
     t.index ["user_id"], name: "index_email_addresses_on_user_id"
   end
 
+  create_table "enrollments", force: :cascade do |t|
+    t.bigint "classroom_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "enrolled_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.bigint "student_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["classroom_id", "student_id"], name: "index_enrollments_on_classroom_id_and_student_id", unique: true
+    t.index ["classroom_id"], name: "index_enrollments_on_classroom_id"
+    t.index ["student_id"], name: "index_enrollments_on_student_id"
+  end
+
+  create_table "flags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.jsonb "evidence", default: {}
+    t.string "flag_type", null: false
+    t.datetime "reviewed_at"
+    t.bigint "reviewed_by_id"
+    t.integer "severity", default: 1
+    t.integer "status", default: 0
+    t.bigint "submission_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["reviewed_by_id"], name: "index_flags_on_reviewed_by_id"
+    t.index ["submission_id"], name: "index_flags_on_submission_id"
+    t.index ["user_id"], name: "index_flags_on_user_id"
+  end
+
   create_table "heartbeats", force: :cascade do |t|
     t.string "branch"
     t.string "category"
@@ -61,6 +124,7 @@ ActiveRecord::Schema[8.1].define(version: 2024_01_01_000015) do
     t.string "editor"
     t.string "entity"
     t.string "fields_hash"
+    t.inet "ip_address"
     t.boolean "is_write", default: false
     t.string "language"
     t.integer "lineno"
@@ -187,6 +251,34 @@ ActiveRecord::Schema[8.1].define(version: 2024_01_01_000015) do
     t.index ["user_id"], name: "index_sign_in_tokens_on_user_id"
   end
 
+  create_table "similarity_reports", force: :cascade do |t|
+    t.bigint "compared_submission_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "matched_lines", default: 0
+    t.jsonb "report_data", default: {}
+    t.decimal "similarity_score", precision: 5, scale: 2, default: "0.0"
+    t.bigint "submission_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["compared_submission_id"], name: "index_similarity_reports_on_compared_submission_id"
+    t.index ["submission_id", "compared_submission_id"], name: "idx_similarity_reports_unique", unique: true
+    t.index ["submission_id"], name: "index_similarity_reports_on_submission_id"
+  end
+
+  create_table "submissions", force: :cascade do |t|
+    t.bigint "assignment_id", null: false
+    t.datetime "created_at", null: false
+    t.string "project_name"
+    t.integer "status", default: 0
+    t.bigint "student_id", null: false
+    t.datetime "submitted_at"
+    t.integer "total_coding_time", default: 0
+    t.decimal "trust_score", precision: 5, scale: 2
+    t.datetime "updated_at", null: false
+    t.index ["assignment_id", "student_id"], name: "index_submissions_on_assignment_id_and_student_id", unique: true
+    t.index ["assignment_id"], name: "index_submissions_on_assignment_id"
+    t.index ["student_id"], name: "index_submissions_on_student_id"
+  end
+
   create_table "trust_level_audit_logs", force: :cascade do |t|
     t.bigint "admin_id", null: false
     t.datetime "created_at", null: false
@@ -211,6 +303,7 @@ ActiveRecord::Schema[8.1].define(version: 2024_01_01_000015) do
     t.string "slack_uid"
     t.string "timezone", default: "UTC"
     t.integer "trust_level", default: 0
+    t.decimal "trust_score", precision: 5, scale: 2, default: "100.0"
     t.datetime "updated_at", null: false
     t.string "username"
     t.index ["email"], name: "index_users_on_email"
@@ -231,9 +324,17 @@ ActiveRecord::Schema[8.1].define(version: 2024_01_01_000015) do
   end
 
   add_foreign_key "api_keys", "users"
+  add_foreign_key "assignments", "classrooms"
+  add_foreign_key "classrooms", "users", column: "teacher_id"
+  add_foreign_key "code_snapshots", "submissions"
   add_foreign_key "commits", "repositories"
   add_foreign_key "commits", "users"
   add_foreign_key "email_addresses", "users"
+  add_foreign_key "enrollments", "classrooms"
+  add_foreign_key "enrollments", "users", column: "student_id"
+  add_foreign_key "flags", "submissions"
+  add_foreign_key "flags", "users"
+  add_foreign_key "flags", "users", column: "reviewed_by_id"
   add_foreign_key "heartbeats", "users"
   add_foreign_key "leaderboard_entries", "leaderboards"
   add_foreign_key "leaderboard_entries", "users"
@@ -245,6 +346,10 @@ ActiveRecord::Schema[8.1].define(version: 2024_01_01_000015) do
   add_foreign_key "repositories", "users"
   add_foreign_key "sailors_logs", "users"
   add_foreign_key "sign_in_tokens", "users"
+  add_foreign_key "similarity_reports", "submissions"
+  add_foreign_key "similarity_reports", "submissions", column: "compared_submission_id"
+  add_foreign_key "submissions", "assignments"
+  add_foreign_key "submissions", "users", column: "student_id"
   add_foreign_key "trust_level_audit_logs", "users"
   add_foreign_key "trust_level_audit_logs", "users", column: "admin_id"
   add_foreign_key "wakatime_mirrors", "users"

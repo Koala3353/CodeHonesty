@@ -1,0 +1,9 @@
+regular_user_in_class:
+  classroom: teacher_class
+  student: regular_user
+  enrolled_at: <%= 1.week.ago %>
+
+another_user_in_class:
+  classroom: teacher_class
+  student: another_user
+  enrolled_at: <%= 1.week.ago %>
