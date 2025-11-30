@@ -1,0 +1,21 @@
+recent_heartbeat:
+  user: regular_user
+  time: <%= Time.current.to_i %>
+  entity: /home/user/project/app.rb
+  project: test-project
+  language: Ruby
+  editor: VS Code
+  operating_system: macOS
+  branch: main
+  source_type: 0
+
+older_heartbeat:
+  user: regular_user
+  time: <%= 1.hour.ago.to_i %>
+  entity: /home/user/project/test.rb
+  project: test-project
+  language: Ruby
+  editor: VS Code
+  operating_system: macOS
+  branch: main
+  source_type: 0

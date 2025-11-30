@@ -1,0 +1,93 @@
+<% content_for(:title) { "Leaderboards - Hackatime" } %>
+
+<div class="max-w-4xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Leaderboards</h1>
+    
+    <div class="flex space-x-4">
+      <%= link_to "Daily", leaderboards_path(period: "daily", date: @date), class: "px-4 py-2 rounded-md #{@period == 'daily' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+      <%= link_to "Weekly", leaderboards_path(period: "last_7_days", date: @date), class: "px-4 py-2 rounded-md #{@period == 'last_7_days' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+    </div>
+  </div>
+
+  <div class="flex justify-between items-center mb-4 text-sm text-gray-500">
+    <div>
+      <%= link_to "← Previous", leaderboards_path(period: @period, date: @date - 1.day), class: "hover:text-gray-700" %>
+    </div>
+    <div class="font-medium">
+      <%= @date.strftime("%B %d, %Y") %>
+    </div>
+    <div>
+      <% if @date < Date.current %>
+        <%= link_to "Next →", leaderboards_path(period: @period, date: @date + 1.day), class: "hover:text-gray-700" %>
+      <% else %>
+        <span class="text-gray-300">Next →</span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <% if @entries.present? %>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time Coded</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Streak</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @entries.each do |entry| %>
+            <tr class="<%= 'bg-yellow-50' if entry.rank <= 3 %>">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% case entry.rank %>
+                <% when 1 %>
+                  <span class="text-2xl">🥇</span>
+                <% when 2 %>
+                  <span class="text-2xl">🥈</span>
+                <% when 3 %>
+                  <span class="text-2xl">🥉</span>
+                <% else %>
+                  <span class="text-gray-500 font-medium">#<%= entry.rank %></span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <% if entry.user.avatar_url.present? %>
+                    <%= image_tag entry.user.avatar_url, class: "w-8 h-8 rounded-full mr-3", alt: entry.user.display_username %>
+                  <% else %>
+                    <span class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-3 text-indigo-600 font-medium">
+                      <%= entry.user.display_username.first.upcase %>
+                    </span>
+                  <% end %>
+                  <span class="font-medium text-gray-900"><%= entry.user.display_username %></span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-900 font-mono">
+                <%= entry.duration_formatted %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if entry.streak_count > 0 %>
+                  <span class="text-orange-500">🔥 <%= entry.streak_count %> days</span>
+                <% else %>
+                  <span class="text-gray-400">-</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="p-8 text-center">
+        <p class="text-gray-500">
+          <% if @leaderboard&.finished? %>
+            No one has coded on this day yet!
+          <% else %>
+            Leaderboard is being generated... Check back soon!
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

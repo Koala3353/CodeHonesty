@@ -1,0 +1,46 @@
+<% content_for(:title) { "Edit #{@user.display_username} - Admin - Hackatime" } %>
+
+<div class="max-w-2xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-white">Edit User</h1>
+    <%= link_to "Cancel", admin_user_path(@user), class: "text-gray-400 hover:text-gray-300" %>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg p-6">
+    <%= form_with model: [:admin, @user], class: "space-y-4" do |f| %>
+      <div>
+        <%= f.label :username, class: "block text-sm font-medium text-gray-300" %>
+        <%= f.text_field :username, class: "mt-1 block w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md" %>
+      </div>
+
+      <div>
+        <%= f.label :email, class: "block text-sm font-medium text-gray-300" %>
+        <%= f.email_field :email, class: "mt-1 block w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md" %>
+      </div>
+
+      <div>
+        <%= f.label :display_name, class: "block text-sm font-medium text-gray-300" %>
+        <%= f.text_field :display_name, class: "mt-1 block w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md" %>
+      </div>
+
+      <div>
+        <%= f.label :timezone, class: "block text-sm font-medium text-gray-300" %>
+        <%= f.time_zone_select :timezone, nil, {}, class: "mt-1 block w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md" %>
+      </div>
+
+      <div>
+        <%= f.label :admin_level, class: "block text-sm font-medium text-gray-300" %>
+        <%= f.select :admin_level, User.admin_levels.keys, {}, class: "mt-1 block w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md" %>
+      </div>
+
+      <div>
+        <%= f.label :trust_level, class: "block text-sm font-medium text-gray-300" %>
+        <%= f.select :trust_level, User.trust_levels.keys, {}, class: "mt-1 block w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md" %>
+      </div>
+
+      <div class="pt-4">
+        <%= f.submit "Save Changes", class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

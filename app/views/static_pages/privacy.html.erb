@@ -1,0 +1,45 @@
+<% content_for(:title) { "Privacy Policy - Hackatime" } %>
+
+<div class="max-w-3xl mx-auto">
+  <div class="bg-white shadow rounded-lg p-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Privacy Policy</h1>
+    
+    <div class="prose prose-indigo max-w-none text-gray-600">
+      <p class="text-sm text-gray-500 mb-6">Last updated: <%= Date.current.strftime("%B %d, %Y") %></p>
+      
+      <h2 class="text-xl font-semibold text-gray-900 mt-6 mb-4">What We Collect</h2>
+      <p class="mb-4">When you use Hackatime, we collect:</p>
+      <ul class="list-disc list-inside space-y-2 mb-4">
+        <li>Your Slack profile information (name, email, avatar)</li>
+        <li>Your GitHub profile information (if you connect GitHub)</li>
+        <li>Coding activity data (timestamps, file names, project names, languages, editors)</li>
+      </ul>
+      
+      <h2 class="text-xl font-semibold text-gray-900 mt-6 mb-4">How We Use Your Data</h2>
+      <p class="mb-4">We use your data to:</p>
+      <ul class="list-disc list-inside space-y-2 mb-4">
+        <li>Display your coding statistics on your dashboard</li>
+        <li>Calculate and display leaderboards</li>
+        <li>Enable Slack integrations (status updates, slash commands)</li>
+        <li>Link your projects to GitHub repositories</li>
+      </ul>
+      
+      <h2 class="text-xl font-semibold text-gray-900 mt-6 mb-4">Data Retention</h2>
+      <p class="mb-4">
+        We retain your coding activity data indefinitely unless you request deletion. 
+        You can export or delete your data at any time by contacting us.
+      </p>
+      
+      <h2 class="text-xl font-semibold text-gray-900 mt-6 mb-4">Third Parties</h2>
+      <p class="mb-4">
+        We do not sell your data. We may share anonymized, aggregated statistics 
+        (e.g., total hours coded by the Hack Club community).
+      </p>
+      
+      <h2 class="text-xl font-semibold text-gray-900 mt-6 mb-4">Contact</h2>
+      <p class="mb-4">
+        For privacy-related questions, please reach out to the Hack Club team.
+      </p>
+    </div>
+  </div>
+</div>

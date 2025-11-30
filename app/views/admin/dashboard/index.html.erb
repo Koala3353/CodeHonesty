@@ -1,0 +1,54 @@
+<% content_for(:title) { "Admin Dashboard - Hackatime" } %>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <div class="bg-gray-800 rounded-lg p-6">
+    <div class="text-gray-400 text-sm font-medium">Total Users</div>
+    <div class="text-3xl font-bold text-white"><%= @total_users %></div>
+    <div class="text-green-400 text-sm">+<%= @users_today %> today</div>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg p-6">
+    <div class="text-gray-400 text-sm font-medium">Total Heartbeats</div>
+    <div class="text-3xl font-bold text-white"><%= number_with_delimiter(@total_heartbeats) %></div>
+    <div class="text-green-400 text-sm">+<%= number_with_delimiter(@heartbeats_today) %> today</div>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg p-6">
+    <div class="text-gray-400 text-sm font-medium">Active Users (1h)</div>
+    <div class="text-3xl font-bold text-white"><%= @active_users %></div>
+    <div class="text-blue-400 text-sm">Currently coding</div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="bg-gray-800 rounded-lg p-6">
+    <h2 class="text-lg font-semibold text-white mb-4">Quick Actions</h2>
+    <div class="space-y-3">
+      <%= button_to "Rebuild Daily Leaderboard", "#", class: "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded", disabled: true %>
+      <%= button_to "Rebuild Weekly Leaderboard", "#", class: "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded", disabled: true %>
+      <%= button_to "Clear Cache", "#", class: "w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded", disabled: true %>
+    </div>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg p-6">
+    <h2 class="text-lg font-semibold text-white mb-4">System Status</h2>
+    <div class="space-y-3 text-gray-300">
+      <div class="flex justify-between">
+        <span>Rails Version</span>
+        <span class="font-mono"><%= Rails::VERSION::STRING %></span>
+      </div>
+      <div class="flex justify-between">
+        <span>Ruby Version</span>
+        <span class="font-mono"><%= RUBY_VERSION %></span>
+      </div>
+      <div class="flex justify-between">
+        <span>Database</span>
+        <span class="font-mono">PostgreSQL</span>
+      </div>
+      <div class="flex justify-between">
+        <span>Job Queue</span>
+        <span class="font-mono">GoodJob</span>
+      </div>
+    </div>
+  </div>
+</div>
