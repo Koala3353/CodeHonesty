@@ -15,6 +15,6 @@ class SimilarityReport < ApplicationRecord
 
   # Get both submissions' students
   def students
-    [submission.student, compared_submission.student]
+    [ submission.student, compared_submission.student ]
   end
 end

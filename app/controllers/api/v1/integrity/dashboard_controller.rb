@@ -96,15 +96,31 @@ module Api
             return render json: { error: "Not authorized" }, status: :forbidden
           end
 
-          # Get historical data for past 30 days
+          # Get historical data for past 30 days - batch load all heartbeats at once
           start_date = 30.days.ago.to_date
+          timezone = student.timezone || "UTC"
+
+          # Load all heartbeats for the period in a single query
+          tz = TZInfo::Timezone.get(timezone)
+          period_start = tz.local_to_utc(start_date.to_time).to_i
+          period_end = tz.local_to_utc((Date.current + 1).to_time).to_i
+
+          all_heartbeats = student.heartbeats
+                                 .where(time: period_start..period_end)
+                                 .order(:time)
+                                 .to_a
+
+          # Group heartbeats by date
+          heartbeats_by_date = all_heartbeats.group_by do |h|
+            tz.to_local(Time.at(h.time)).to_date
+          end
 
           daily_activity = (start_date..Date.current).map do |date|
-            heartbeats = student.heartbeats.on_date(date, student.timezone || "UTC")
+            day_heartbeats = heartbeats_by_date[date] || []
             {
               date: date.to_s,
-              coding_time: heartbeats.calculate_duration,
-              heartbeat_count: heartbeats.count
+              coding_time: calculate_duration_from_array(day_heartbeats),
+              heartbeat_count: day_heartbeats.count
             }
           end
 
@@ -254,7 +270,7 @@ module Api
 
           # Higher consistency = lower relative standard deviation
           coefficient_of_variation = mean > 0 ? std_dev / mean : 0
-          ((1 - [coefficient_of_variation, 1].min) * 100).round(2)
+          ((1 - [ coefficient_of_variation, 1 ].min) * 100).round(2)
         end
 
         def flags_summary(student)
@@ -315,7 +331,7 @@ module Api
 
           # Create histogram buckets
           max_time = times.max
-          bucket_size = [max_time / 10, 3600].max # At least 1 hour buckets
+          bucket_size = [ max_time / 10, 3600 ].max # At least 1 hour buckets
 
           buckets = {}
           times.each do |time|
@@ -342,7 +358,7 @@ module Api
             end
           end
 
-          matrix.uniq { |m| [m[:student1], m[:student2]].sort }
+          matrix.uniq { |m| [ m[:student1], m[:student2] ].sort }
         end
 
         def submission_flag_summary(submission)
@@ -353,6 +369,22 @@ module Api
             total_coding_time: format_duration(submission.total_coding_time || 0),
             flags: submission.flags.map { |f| { type: f.flag_type, severity: f.severity } }
           }
+        end
+
+        # Calculate duration from an array of heartbeats (avoids N+1 queries)
+        def calculate_duration_from_array(heartbeats)
+          return 0 if heartbeats.empty?
+
+          sorted = heartbeats.sort_by(&:time)
+          total = 0
+          timeout = 120 # 2 minute timeout
+
+          sorted.each_cons(2) do |a, b|
+            gap = b.time - a.time
+            total += [ gap, timeout ].min
+          end
+
+          total
         end
       end
     end

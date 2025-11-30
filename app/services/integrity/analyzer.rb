@@ -64,7 +64,7 @@ class Integrity::Analyzer
       base_score -= weight
     end
 
-    [[base_score, 0].max, 100].min
+    [ [ base_score, 0 ].max, 100 ].min
   end
 
   private

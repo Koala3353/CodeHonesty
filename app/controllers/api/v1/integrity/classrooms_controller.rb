@@ -2,8 +2,8 @@ module Api
   module V1
     module Integrity
       class ClassroomsController < BaseController
-        before_action :require_teacher!, except: [:join, :my_classrooms]
-        before_action :set_classroom, only: [:show, :update, :destroy, :students, :add_student]
+        before_action :require_teacher!, except: [ :join, :my_classrooms ]
+        before_action :set_classroom, only: [ :show, :update, :destroy, :students, :add_student ]
 
         # GET /api/v1/integrity/classrooms
         def index

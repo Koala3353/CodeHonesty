@@ -121,7 +121,7 @@ class Integrity::SessionAnomalyDetector < Integrity::BaseDetector
 
     sorted.each_cons(2) do |a, b|
       gap = b.time - a.time
-      total += [gap, SESSION_TIMEOUT].min
+      total += [ gap, SESSION_TIMEOUT ].min
     end
 
     total

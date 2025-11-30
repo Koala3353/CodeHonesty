@@ -1,7 +1,8 @@
-# Detects geographic impossibilities - coding from distant locations within short time
+# Detects geographic impossibilities - coding from different locations within short time
+# Currently detects multiple IP addresses in short timeframes as a proxy for geographic distance
 class Integrity::GeographicDetector < Integrity::BaseDetector
-  MAX_DISTANCE_KM = 500           # Max reasonable distance in 1 hour
   ANALYSIS_WINDOW_SECONDS = 3600  # 1 hour window
+  MIN_UNIQUE_IPS = 2              # Minimum unique IPs to flag
 
   def detect
     return [] if heartbeats.empty?
@@ -17,7 +18,7 @@ class Integrity::GeographicDetector < Integrity::BaseDetector
     # Group heartbeats by IP address
     ip_groups = heartbeats.where.not(ip_address: nil).group_by(&:ip_address)
 
-    return if ip_groups.keys.count < 2
+    return if ip_groups.keys.count < MIN_UNIQUE_IPS
 
     # Check for multiple IPs in short time windows
     windows = sliding_windows(ANALYSIS_WINDOW_SECONDS)
@@ -25,7 +26,7 @@ class Integrity::GeographicDetector < Integrity::BaseDetector
     windows.each do |window|
       unique_ips = window.map(&:ip_address).compact.uniq
 
-      if unique_ips.count > 1
+      if unique_ips.count >= MIN_UNIQUE_IPS
         # Flag multiple IPs in same window (without actual geolocation)
         add_flag(
           type: :geographic_impossibility,

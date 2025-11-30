@@ -3,7 +3,7 @@ module Api
     module Integrity
       class FlagsController < BaseController
         before_action :require_teacher!
-        before_action :set_flag, only: [:show, :review]
+        before_action :set_flag, only: [ :show, :review ]
 
         # GET /api/v1/integrity/flags
         def index

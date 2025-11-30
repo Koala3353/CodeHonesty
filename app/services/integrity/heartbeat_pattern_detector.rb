@@ -3,6 +3,9 @@ class Integrity::HeartbeatPatternDetector < Integrity::BaseDetector
   REGULAR_INTERVAL_THRESHOLD = 0.5  # Standard deviation threshold for too-regular intervals
   IMPOSSIBLE_SPEED_LINES = 500      # Max lines per minute
   MIN_HEARTBEATS_FOR_ANALYSIS = 10  # Minimum heartbeats needed
+  MIN_INTERVAL_SECONDS = 5          # Minimum reasonable interval between heartbeats
+  MAX_INTERVAL_SECONDS = 300        # Maximum reasonable interval (5 minutes)
+  MIN_INTERVALS_FOR_ANALYSIS = 5    # Minimum intervals needed for statistical analysis
 
   def detect
     return [] if heartbeats.count < MIN_HEARTBEATS_FOR_ANALYSIS
@@ -18,11 +21,11 @@ class Integrity::HeartbeatPatternDetector < Integrity::BaseDetector
   def detect_regular_intervals
     intervals = calculate_intervals
 
-    return if intervals.count < 5
+    return if intervals.count < MIN_INTERVALS_FOR_ANALYSIS
 
-    # Filter to reasonable intervals (5 seconds to 5 minutes)
-    reasonable_intervals = intervals.select { |i| i >= 5 && i <= 300 }
-    return if reasonable_intervals.count < 5
+    # Filter to reasonable intervals
+    reasonable_intervals = intervals.select { |i| i >= MIN_INTERVAL_SECONDS && i <= MAX_INTERVAL_SECONDS }
+    return if reasonable_intervals.count < MIN_INTERVALS_FOR_ANALYSIS
 
     std_dev = standard_deviation(reasonable_intervals)
 

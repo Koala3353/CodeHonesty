@@ -4,6 +4,10 @@ module Api
       class AnalyticsController < BaseController
         before_action :require_teacher!
 
+        # Constants for trust score calculations
+        FLAG_IMPACT_SCORE = -10  # Base score deduction per confirmed flag
+        SESSION_TIMEOUT_SECONDS = 120  # 2 minute timeout between heartbeats
+
         # GET /api/v1/integrity/analytics/coding-patterns/:user_id
         def coding_patterns
           user = User.find(params[:user_id])
@@ -145,7 +149,7 @@ module Api
           sorted.each_cons(2) do |prev, curr|
             gap = curr.time - prev.time
 
-            if gap <= 120 # 2 minute timeout
+            if gap <= SESSION_TIMEOUT_SECONDS
               current_end = curr.time
             else
               duration = current_end - current_start
@@ -176,7 +180,7 @@ module Api
 
           sorted.each_cons(2) do |a, b|
             gap = b.time - a.time
-            total += [gap, 120].min
+            total += [ gap, SESSION_TIMEOUT_SECONDS ].min
           end
 
           total
@@ -232,7 +236,7 @@ module Api
           flags = user.flags.status_confirmed
 
           impact_by_type = flags.group(:flag_type).count.transform_values do |count|
-            count * -10 # Simplified impact calculation
+            count * FLAG_IMPACT_SCORE
           end
 
           {

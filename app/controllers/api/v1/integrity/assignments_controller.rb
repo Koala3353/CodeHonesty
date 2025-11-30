@@ -2,9 +2,9 @@ module Api
   module V1
     module Integrity
       class AssignmentsController < BaseController
-        before_action :require_teacher!, except: [:show, :my_assignments, :submit]
-        before_action :set_classroom, only: [:index, :create]
-        before_action :set_assignment, only: [:show, :update, :destroy, :submissions]
+        before_action :require_teacher!, except: [ :show, :my_assignments, :submit ]
+        before_action :set_classroom, only: [ :index, :create ]
+        before_action :set_assignment, only: [ :show, :update, :destroy, :submissions ]
 
         # GET /api/v1/integrity/classrooms/:classroom_id/assignments
         def index

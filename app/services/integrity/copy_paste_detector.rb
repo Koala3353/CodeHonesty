@@ -1,8 +1,10 @@
 # Detects copy-paste patterns by analyzing code velocity vs heartbeat activity
 class Integrity::CopyPasteDetector < Integrity::BaseDetector
-  AVG_CHARS_PER_MINUTE = 300  # Average typing speed in characters
-  MIN_CHARS_FOR_FLAG = 500    # Minimum characters to consider
-  VELOCITY_THRESHOLD = 0.2    # If actual time < expected time * threshold
+  AVG_CHARS_PER_MINUTE = 300      # Average typing speed in characters
+  AVG_CHARS_PER_LINE = 80         # Average characters per line of code
+  MIN_CHARS_FOR_FLAG = 500        # Minimum characters to consider
+  VELOCITY_THRESHOLD = 0.2        # If actual time < expected time * threshold
+  SESSION_GAP_SECONDS = 300       # Gap indicating different session (5 minutes)
 
   def detect
     return [] if heartbeats.empty?
@@ -31,10 +33,10 @@ class Integrity::CopyPasteDetector < Integrity::BaseDetector
     time_diff = curr_hb.time - prev_hb.time
 
     # Skip if time difference is too large (different session)
-    return if time_diff > 300  # 5 minutes
+    return if time_diff > SESSION_GAP_SECONDS
 
-    # Estimate characters (average ~80 chars per line)
-    estimated_chars = lines_added * 80
+    # Estimate characters based on average chars per line
+    estimated_chars = lines_added * AVG_CHARS_PER_LINE
 
     return if estimated_chars < MIN_CHARS_FOR_FLAG
 

@@ -26,7 +26,7 @@ class Integrity::HeartbeatPatternDetectorTest < ActiveSupport::TestCase
 
     # Create heartbeats with varied intervals
     base_time = 1.hour.ago.to_i
-    intervals = [15, 45, 22, 67, 33, 89, 12, 55, 28, 71]
+    intervals = [ 15, 45, 22, 67, 33, 89, 12, 55, 28, 71 ]
     current_time = base_time
 
     intervals.each do |interval|

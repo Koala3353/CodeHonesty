@@ -10,6 +10,6 @@ class CreateSimilarityReports < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :similarity_reports, [:submission_id, :compared_submission_id], unique: true, name: "idx_similarity_reports_unique"
+    add_index :similarity_reports, [ :submission_id, :compared_submission_id ], unique: true, name: "idx_similarity_reports_unique"
   end
 end
