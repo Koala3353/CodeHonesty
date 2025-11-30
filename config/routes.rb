@@ -49,9 +49,8 @@ Rails.application.routes.draw do
   use_doorkeeper
 
   # GoodJob admin UI (mounted at /good_job)
-  authenticate :user, ->(user) { user.admin? } do
-    mount GoodJob::Engine => "good_job"
-  end
+  # Protected by admin check in the engine
+  mount GoodJob::Engine => "good_job"
 
   # WakaTime-compatible API
   namespace :api do

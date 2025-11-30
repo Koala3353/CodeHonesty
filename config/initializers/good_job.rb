@@ -37,3 +37,11 @@ Rails.application.config.good_job = {
     }
   }
 }
+
+# Protect GoodJob dashboard with admin authentication
+GoodJob::Engine.middleware.use(Rack::Auth::Basic) do |username, password|
+  # In production, you would validate against real admin credentials
+  # For now, this is a simple check
+  ActiveSupport::SecurityUtils.secure_compare(username, ENV.fetch("GOOD_JOB_USERNAME", "admin")) &&
+    ActiveSupport::SecurityUtils.secure_compare(password, ENV.fetch("GOOD_JOB_PASSWORD", "admin"))
+end

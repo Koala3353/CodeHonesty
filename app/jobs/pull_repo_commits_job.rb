@@ -7,7 +7,7 @@ class PullRepoCommitsJob < ApplicationJob
 
     return if user.github_access_token_ciphertext.blank?
 
-    github = RepoHost::GitHubService.new(user.github_access_token_ciphertext)
+    github = RepoHost::GithubService.new(user.github_access_token_ciphertext)
 
     # Get commits from the last 30 days
     since = 30.days.ago

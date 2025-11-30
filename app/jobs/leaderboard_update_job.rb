@@ -1,11 +1,12 @@
 class LeaderboardUpdateJob < ApplicationJob
+  include GoodJob::ActiveJobExtensions::Concurrency
+
   queue_as :latency_5m
 
   # Ensure only one job runs per period/date combination
   good_job_control_concurrency_with(
     key: -> { "leaderboard_#{arguments[0]}_#{arguments[1]}" },
-    total: 1,
-    drop: true
+    total_limit: 1
   )
 
   def perform(period_type, date_string = nil)

@@ -1,5 +1,5 @@
 module RepoHost
-  class GitHubService
+  class GithubService
     BASE_URL = "https://api.github.com"
 
     attr_reader :access_token

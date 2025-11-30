@@ -6,7 +6,7 @@ class ScanGithubReposJob < ApplicationJob
 
     return if user.github_access_token_ciphertext.blank?
 
-    github = RepoHost::GitHubService.new(user.github_access_token_ciphertext)
+    github = RepoHost::GithubService.new(user.github_access_token_ciphertext)
 
     page = 1
     loop do
