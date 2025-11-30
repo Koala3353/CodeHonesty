@@ -6,7 +6,12 @@ class ScanGithubReposJob < ApplicationJob
 
     return if user.github_access_token_ciphertext.blank?
 
-    github = RepoHost::GithubService.new(user.github_access_token_ciphertext)
+    # Note: In production, you would decrypt the access token here using
+    # Rails credentials or attr_encrypted gem. For now, we're using
+    # the value directly as a placeholder.
+    access_token = user.github_access_token_ciphertext
+
+    github = RepoHost::GithubService.new(access_token)
 
     page = 1
     loop do

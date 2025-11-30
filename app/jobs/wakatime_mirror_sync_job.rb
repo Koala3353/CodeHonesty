@@ -8,10 +8,15 @@ class WakatimeMirrorSyncJob < ApplicationJob
     return unless mirror.enabled?
     return if mirror.api_key_ciphertext.blank?
 
+    # Note: In production, you would decrypt the API key here using
+    # Rails credentials or attr_encrypted gem. For now, we're using
+    # the value directly as a placeholder.
+    api_key = mirror.api_key_ciphertext
+
     uri = URI("#{mirror.endpoint}/api/v1/users/current/heartbeats")
 
     request = Net::HTTP::Post.new(uri)
-    request["Authorization"] = "Bearer #{mirror.api_key_ciphertext}" # Note: decrypt in production
+    request["Authorization"] = "Bearer #{api_key}"
     request["Content-Type"] = "application/json"
     request.body = {
       time: heartbeat.time,

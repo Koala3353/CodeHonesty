@@ -13,11 +13,16 @@ class UserSlackStatusUpdateJob < ApplicationJob
     # Only update if activity is recent (within last 5 minutes)
     return if Time.at(recent_heartbeat.time) < 5.minutes.ago
 
+    # Note: In production, you would decrypt the access token here using
+    # Rails credentials or attr_encrypted gem. For now, we're using
+    # the value directly as a placeholder.
+    access_token = user.slack_access_token_ciphertext
+
     # Update Slack status
     uri = URI("https://slack.com/api/users.profile.set")
 
     request = Net::HTTP::Post.new(uri)
-    request["Authorization"] = "Bearer #{user.slack_access_token_ciphertext}"
+    request["Authorization"] = "Bearer #{access_token}"
     request["Content-Type"] = "application/json"
     request.body = {
       profile: {
