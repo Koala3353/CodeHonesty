@@ -1,0 +1,8 @@
+user_submission:
+  assignment: homework_one
+  student: regular_user
+  project_name: "test-project"
+  submitted_at: <%= 1.day.ago %>
+  status: 1
+  trust_score: 95.0
+  total_coding_time: 14400

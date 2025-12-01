@@ -90,6 +90,58 @@ Rails.application.routes.draw do
         get "heartbeats/latest", to: "me#heartbeats_latest"
         get "api_keys", to: "me#api_keys"
       end
+
+      # Academic Integrity API
+      namespace :integrity do
+        # Classrooms
+        resources :classrooms do
+          member do
+            get :students
+            post :students, to: "classrooms#add_student"
+          end
+          resources :assignments, only: [:index, :create]
+        end
+        post "classrooms/join", to: "classrooms#join"
+        get "my/classrooms", to: "classrooms#my_classrooms"
+
+        # Assignments
+        resources :assignments, only: [:show, :update, :destroy] do
+          member do
+            get :submissions
+          end
+          post :submit, to: "assignments#submit"
+        end
+        get "my/assignments", to: "assignments#my_assignments"
+
+        # Submissions
+        resources :submissions, only: [:show] do
+          member do
+            get :heartbeats
+            get :timeline
+            get :analysis
+          end
+        end
+
+        # Flags
+        resources :flags, only: [:index, :show] do
+          member do
+            put :review
+          end
+        end
+        get "students/:id/flags", to: "flags#student_flags"
+
+        # Dashboard
+        get "dashboard/overview", to: "dashboard#overview"
+        get "dashboard/classroom/:id/stats", to: "dashboard#classroom_stats"
+        get "dashboard/student/:id/profile", to: "dashboard#student_profile"
+        get "dashboard/student/:id/history", to: "dashboard#student_history"
+        get "dashboard/assignment/:id/integrity", to: "dashboard#assignment_integrity"
+
+        # Analytics
+        get "analytics/coding-patterns/:user_id", to: "analytics#coding_patterns"
+        get "analytics/similarity/:submission_id", to: "analytics#similarity"
+        get "analytics/trust-trend/:user_id", to: "analytics#trust_trend"
+      end
     end
 
     # Admin API

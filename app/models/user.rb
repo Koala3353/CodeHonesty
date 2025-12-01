@@ -13,6 +13,14 @@ class User < ApplicationRecord
   has_many :physical_mails, dependent: :destroy
   has_many :sailors_logs, dependent: :destroy
 
+  # Academic integrity associations
+  has_many :taught_classrooms, class_name: "Classroom", foreign_key: "teacher_id", dependent: :destroy
+  has_many :enrollments, foreign_key: "student_id", dependent: :destroy
+  has_many :enrolled_classrooms, through: :enrollments, source: :classroom
+  has_many :submissions, foreign_key: "student_id", dependent: :destroy
+  has_many :flags, dependent: :destroy
+  has_many :reviewed_flags, class_name: "Flag", foreign_key: "reviewed_by_id", dependent: :nullify
+
   # Trust levels for moderation
   enum :trust_level, {
     blue: 0,    # Unscored (default)
@@ -123,6 +131,40 @@ class User < ApplicationRecord
 
   def can_appear_on_leaderboard?
     !trust_red?
+  end
+
+  # Check if user is a teacher (has classrooms)
+  def teacher?
+    taught_classrooms.exists?
+  end
+
+  # Check if user is enrolled in any classroom
+  def student?
+    enrollments.exists?
+  end
+
+  # Calculate and update trust score based on flags
+  def calculate_trust_score!
+    base_score = 100.0
+
+    # Deductions for confirmed flags
+    flags.status_confirmed.each do |flag|
+      case flag.severity
+      when "critical"
+        base_score -= 25
+      when "high"
+        base_score -= 15
+      when "medium"
+        base_score -= 10
+      else
+        base_score -= 5
+      end
+    end
+
+    # Ensure score is between 0 and 100
+    new_score = [[base_score, 0].max, 100].min
+    update!(trust_score: new_score)
+    new_score
   end
 
   private

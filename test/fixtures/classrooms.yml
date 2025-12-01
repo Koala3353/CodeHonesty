@@ -1,0 +1,9 @@
+teacher_class:
+  name: "CS101 - Intro to Programming"
+  code: "ABC123"
+  teacher: admin
+
+second_class:
+  name: "CS201 - Data Structures"
+  code: "XYZ789"
+  teacher: admin

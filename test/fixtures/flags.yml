@@ -1,0 +1,11 @@
+copy_paste_flag:
+  submission: user_submission
+  user: regular_user
+  flag_type: copy_paste
+  severity: 2
+  description: "Large code addition detected"
+  evidence:
+    lines_added: 200
+    actual_time: 30
+    expected_time: 400
+  status: 0

@@ -1,0 +1,13 @@
+homework_one:
+  classroom: teacher_class
+  title: "Homework 1"
+  description: "Complete the basic exercises"
+  due_date: <%= 1.week.from_now %>
+  expected_hours: 4.0
+
+homework_two:
+  classroom: teacher_class
+  title: "Homework 2"
+  description: "Advanced exercises"
+  due_date: <%= 2.weeks.from_now %>
+  expected_hours: 6.0
